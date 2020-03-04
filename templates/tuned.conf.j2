@@ -1,0 +1,20 @@
+[main]
+include=throughput-performance
+summary=Optimize for Redis server performance
+
+[sysctl]
+# Copied from 'virtual-guest' in /usr/lib/tuned/virtual-guest/tuned.conf
+vm.dirty_ratio = 30
+vm.swappiness = 30
+{% if os_required_parameters is defined and os_required_parameters | length > 0 %}
+{% for item in os_required_parameters %}
+{{ item.key }} = {{ item.value }}
+{% endfor %}
+{% else %}
+length = 0
+{% endif %}
+
+{% if os_disable_thp is defined and os_disable_thp %}
+[vm]
+transparent_hugepages=never
+{% endif %}

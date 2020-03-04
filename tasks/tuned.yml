@@ -1,0 +1,38 @@
+---
+
+- name: Ensure tuned is started and enabled
+  service:
+    name: tuned
+    state: started
+    enabled: true
+
+- name: Ensure directory exists under /etc/tuned
+  file:
+    path: /etc/tuned/redis-server
+    state: directory
+
+- name: Transfer template file to the remote location
+  template:
+    src: tuned.conf.j2
+    dest: /etc/tuned/redis-server/tuned.conf
+
+- name: Restart tuned service
+  systemd:
+    name: tuned
+    state: restarted
+    enabled: true
+    daemon_reload: true
+
+- name: Check tuned profile
+  command: tuned-adm active
+  register: tuned_active
+  changed_when: false
+
+- name: Set redis-server profile as active profile
+  command: tuned-adm profile redis-server
+  when: "'Current active profile: redis-server' not in tuned_active.stdout"
+  notify:
+    - start and enable redis
+    - start and enable sentinel
+
+...

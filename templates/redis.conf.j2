@@ -1,0 +1,44 @@
+bind 0.0.0.0
+port {{ redis_port }}
+tcp-backlog {{ redis_tcp_backlog }}
+tcp-keepalive {{ redis_tcp_keepalive }}
+
+{% if groups[hostvars[inventory_hostname].group_names[0]][0] != inventory_hostname %}
+replicaof {{ groups[hostvars[inventory_hostname].group_names[0]][0] }} {{ redis_port }}
+replica-read-only {{ redis_replica_read_only }}
+{% endif %}
+
+loglevel {{ redis_log_level }}
+logfile {{ redis_log_file }}
+
+maxmemory {{ redis_max_memory }}
+maxmemory-policy {{ redis_max_memory_policy }}
+maxclients {{ redis_maxclients }}
+
+databases {{ redis_num_of_databases }}
+{% if redis_enable_rdb is defined and redis_enable_rdb %}
+{% for item in redis_rdb_params %}
+save {{ item }}
+{% endfor %}
+stop-writes-on-bgsave-error {{ redis_stop_writes_on_bgsave_error }}
+rdbcompression {{ redis_enable_rdbcompression }}
+rdbchecksum {{ redis_enable_rdbchecksum }}
+dbfilename dump.rdb
+{% endif %}
+
+appendonly {{ redis_enable_appendonly }}
+{% if redis_enable_appendonly is defined and redis_enable_appendonly != "no" %}
+appendfilename appendonly.aof
+appendfsync {{ redis_appendfsync }}
+aof-load-truncated {{ redis_aof_load_truncated }}
+auto-aof-rewrite-percentage {{ redis_auto_aof_rewrite_percentage }}
+auto-aof-rewrite-min-size {{ redis_auto_aof_rewrite_min_size }}
+no-appendfsync-on-rewrite {{ redis_no_appendfsync_on_rewrite }}
+{% endif %}
+
+{% if redis_enable_latency_monitor %}
+latency-monitor-threshold {{ redis_latency_monitor_threshold }}
+{% endif %}
+daemonize {{ redis_daemonize }}
+pidfile /var/run/redis.pid
+dir {{ redis_data_dir }}

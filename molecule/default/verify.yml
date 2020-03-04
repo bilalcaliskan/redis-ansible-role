@@ -1,0 +1,16 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  tasks:
+    - name: Ensure redis and sentinel ports are reachable
+      wait_for:
+        host: localhost
+        port: "{{ item }}"
+        timeout: 3
+      loop:
+        - 6379
+        - 16379
+
+...

@@ -1,0 +1,76 @@
+---
+
+redis_install: true
+redis_port: 6379
+redis_replica_read_only: "yes"
+redis_log_level: notice
+redis_log_file: /var/log/redis/redis.log
+redis_max_memory: 6gb
+redis_max_memory_policy: volatile-ttl
+redis_num_of_databases: 16
+redis_enable_rdb: false
+redis_rdb_params:
+  - 900 1
+  - 300 10
+  - 60 10000
+redis_stop_writes_on_bgsave_error: "yes"
+redis_enable_rdbcompression: "yes"
+redis_enable_rdbchecksum: "yes"
+redis_enable_appendonly: "no"
+redis_appendfsync: everysec
+redis_aof_load_truncated: "yes"
+redis_auto_aof_rewrite_percentage: 100
+redis_auto_aof_rewrite_min_size: 64mb
+redis_no_appendfsync_on_rewrite: "no"
+redis_daemonize: "yes"
+redis_enable_latency_monitor: true
+redis_latency_monitor_threshold: 1000
+redis_data_dir: /var/lib/redis
+# In high requests-per-second environments you need an high backlog in order
+# to avoid slow clients connections issues. Note that the Linux kernel
+# will silently truncate it to the value of /proc/sys/net/core/somaxconn so
+# make sure to raise both the value of somaxconn and tcp_max_syn_backlog
+# in order to get the desired effect.
+redis_tcp_backlog: 10000
+# Below is the default number of maximum clients of a redis server. To increase that limit,
+# you should also increase the LimitNOFILE in os_required_limits variable below.
+# redis_maxclients + 32 should not pass LimitNOFILE in the os_required_limits. Notice
+# that once the limit is reached, Redis will close all the new connections.
+redis_maxclients: 10000
+redis_tcp_keepalive: 300
+
+sentinel_port: 16379
+sentinel_cluster_name: sample-cluster
+sentinel_log_file: /var/log/redis/sentinel.log
+sentinel_data_dir: /var/lib/sentinel
+sentinel_down_after_milliseconds: 10000
+sentinel_quorum: 1
+
+# if you don't want to apply any custom kernel parameter for performance, leave it like below commented line
+# os_required_parameters: []
+os_required_parameters:
+  - key: vm.overcommit_memory
+    value: 1
+  # net.ipv4.tcp_max_syn_backlog = global backlog limit
+  # net.core.somaxconn = backlog by port
+  # So setting the ratio like 2 * net.core.somaxconn = net.ipv4.tcp_max_syn_backlog looks ideal
+  - key: net.core.somaxconn
+    value: 10240
+  - key: net.ipv4.tcp_max_syn_backlog
+    value: 20480
+# if you only want default limits of redis package, leave it like below commented line
+# By the way 10240 is already the default one.
+# os_required_limits: []
+os_required_limits:
+  - key: LimitNOFILE
+    value: 102400
+os_disable_thp: true
+# Preferred swap size for Redis is as much as swap as memory
+# https://redis.io/topics/admin
+os_disable_swap: true
+# New swap file on the below location will be created only if os_disable_swap is false
+# and current swap space on the system(ansible_swaptotal_mb) is 0 MB.
+os_swap_file_path: /swapfile
+os_swap_file_size_mb: "{{ (ansible_memtotal_mb / 2) | round | int }}"
+
+...

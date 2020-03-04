@@ -1,0 +1,8 @@
+bind 0.0.0.0
+port {{ sentinel_port }}
+
+dir {{ sentinel_data_dir }}
+logfile {{ sentinel_log_file }}
+
+sentinel monitor {{ sentinel_cluster_name }} {{ groups[hostvars[inventory_hostname].group_names[0]][0] }} {{ redis_port }} {{ sentinel_quorum }}
+sentinel down-after-milliseconds {{ sentinel_cluster_name }} {{ sentinel_down_after_milliseconds }}

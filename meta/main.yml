@@ -1,0 +1,26 @@
+---
+
+galaxy_info:
+  author: bilalcaliskan
+  role_name: redis
+  description: Redis setup role with Sentinel on CentOS/RHEL 7/8 hosts
+  min_ansible_version: 2.7
+  galaxy_tags:
+    - configuration
+    - redis
+    - sentinel
+  license: "license (BSD, MIT)"
+  platforms:
+    - name: EL
+      versions:
+        - 7
+        - 8
+
+dependencies:
+  - src: bilalcaliskan.remi
+    when:
+      - (redis_install | bool)
+      - ansible_os_family == "RedHat"
+      - ansible_distribution_major_version == "7"
+
+...

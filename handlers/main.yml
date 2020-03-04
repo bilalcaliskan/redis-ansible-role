@@ -1,0 +1,15 @@
+---
+
+- name: start and enable redis
+  service:
+    name: redis
+    state: started
+    enabled: true
+
+- name: start and enable sentinel
+  service:
+    name: redis-sentinel
+    state: started
+    enabled: true
+
+...

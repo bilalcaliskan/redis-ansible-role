@@ -1,0 +1,48 @@
+---
+
+- name: Disable swap block
+  block:
+    - name: Disable swap
+      command: swapoff -a
+
+    - name: Remove swapfile from /etc/fstab
+      mount:
+        name: swap
+        fstype: swap
+        state: absent
+  when: (os_disable_swap | bool) and ansible_swaptotal_mb != 0
+
+- name: Create swap block
+  block:
+    - name: Add swap file entry in fstab
+      mount:
+        name: none
+        src: "{{ os_swap_file_path }}"
+        fstype: swap
+        opts: sw
+        state: present
+
+    - name: Ensure swap file exists
+      command: >
+        dd if=/dev/zero of={{ os_swap_file_path }} bs=1M count={{ os_swap_file_size_mb }}
+        creates='{{ os_swap_file_path }}'
+      register: create_swap_result
+
+    - name: Set permissions on swap file
+      file:
+        path: "{{ os_swap_file_path }}"
+        owner: root
+        group: root
+        mode: 0600
+
+    - name: Make swap file if neccessary
+      command: mkswap "{{ os_swap_file_path }}"
+      when: create_swap_result is changed
+      register: mkswap_result
+
+    - name: Run swapon on swapfile
+      command: swapon {{ os_swap_file_path }}
+      when: mkswap_result is changed
+  when: not (os_disable_swap | bool) and ansible_swaptotal_mb == 0
+
+...

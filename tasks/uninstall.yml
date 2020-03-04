@@ -1,0 +1,99 @@
+---
+
+- name: Get service facts
+  service_facts:
+
+- name: Check if Redis is installed
+  set_fact:
+    redis_installed: true
+  when: ansible_facts.services["redis.service"] is defined
+
+- name: Remove Redis
+  block:
+    - name: Include version specific variables for CentOS/RHEL
+      include_vars: "redhat_{{ ansible_distribution_major_version }}.yml"
+
+    - name: Ensure redis and redis-sentinel services are stopped and disabled
+      service:
+        name: "{{ item }}"
+        state: stopped
+        enabled: false
+      loop:
+        - redis
+        - redis-sentinel
+
+    - name: Ensure firewalld configuration is reverted
+      firewalld:
+        port: "{{ item }}/tcp"
+        permanent: true
+        immediate: true
+        state: disabled
+      loop:
+        - "{{ redis_port }}"
+        - "{{ sentinel_port }}"
+
+    - name: Remove transferred files and created directories
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /etc/redis.conf
+        - /etc/redis-sentinel.conf
+        - "{{ sentinel_data_dir }}"
+        - "{{ redis_log_file }}"
+        - "{{ sentinel_log_file }}"
+        - /etc/tuned/redis-server
+
+    - name: Remove redis package
+      yum:
+        name: redis
+        state: absent
+
+    - name: Ensure the redis user is removed
+      user:
+        name: redis
+        state: absent
+        remove: true
+
+    - name: Ensure the redis group is removed
+      group:
+        name: redis
+        state: absent
+
+    - name: Ensure tuned is restarted
+      systemd:
+        name: tuned
+        state: restarted
+        daemon_reload: true
+
+    - name: Set virtual-guest as active tuned profile
+      command: tuned-adm profile virtual-guest
+
+    - name: Disable swap block
+      block:
+        - name: Remove swap file entry in fstab
+          mount:
+            name: none
+            src: "{{ os_swap_file_path }}"
+            fstype: swap
+            opts: sw
+            state: absent
+
+        - name: Disable swap
+          command: swapoff -a
+          tags: ['skip_ansible_lint']
+
+        - name: Ensure swap file doesn't exist anymore
+          file:
+            path: "{{ os_swap_file_path }}"
+            state: absent
+      when: (os_disable_swap | bool) and ansible_swaptotal_mb != 0
+  rescue:
+    - name: Print error message and fail
+      fail:
+        msg: "Got an error inside block, try to rerun tasks with -v option"
+  when:
+    - ansible_facts.services["redis.service"] is defined
+    - ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
+
+...
