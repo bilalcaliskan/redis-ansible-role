@@ -1,6 +1,6 @@
 ---
 
-# Currently latest redis on AppStream repository is 5.0.3
+# Currently latest redis on AppStream repository is 5.0.3 
 redis_version: latest
 os_required_packages:
   - wget
