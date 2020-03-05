@@ -1,15 +1,12 @@
 ---
 
-- name: start and enable redis
+- name: start and enable services
   service:
-    name: redis
+    name: "{{ item }}"
     state: started
     enabled: true
-
-- name: start and enable sentinel
-  service:
-    name: redis-sentinel
-    state: started
-    enabled: true
+  loop:
+    - redis
+    - redis-sentinel
 
 ...
