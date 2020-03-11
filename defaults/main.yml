@@ -24,7 +24,9 @@ redis_auto_aof_rewrite_min_size: 64mb
 redis_no_appendfsync_on_rewrite: "no"
 redis_daemonize: "yes"
 redis_enable_latency_monitor: true
-redis_latency_monitor_threshold: 1000
+redis_latency_monitor_threshold: 300
+redis_slowlog_log_slower_than: 300000
+redis_slowlog_max_len: 1000
 redis_data_dir: /var/lib/redis
 # In high requests-per-second environments you need an high backlog in order
 # to avoid slow clients connections issues. Note that the Linux kernel

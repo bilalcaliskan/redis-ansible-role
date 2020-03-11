@@ -39,6 +39,9 @@ no-appendfsync-on-rewrite {{ redis_no_appendfsync_on_rewrite }}
 {% if redis_enable_latency_monitor %}
 latency-monitor-threshold {{ redis_latency_monitor_threshold }}
 {% endif %}
+slowlog-log-slower-than {{ redis_slowlog_log_slower_than }}
+slowlog-max-len {{ redis_slowlog_max_len }}
+
 daemonize {{ redis_daemonize }}
 pidfile /var/run/redis.pid
 dir {{ redis_data_dir }}
