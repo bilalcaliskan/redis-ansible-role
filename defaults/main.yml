@@ -33,7 +33,7 @@ redis_data_dir: /var/lib/redis
 # will silently truncate it to the value of /proc/sys/net/core/somaxconn so
 # make sure to raise both the value of somaxconn and tcp_max_syn_backlog
 # in order to get the desired effect.
-redis_tcp_backlog: 10000
+redis_tcp_backlog: 10240
 # Below is the default number of maximum clients of a redis server. To increase that limit,
 # you should also increase the LimitNOFILE in os_required_limits variable below.
 # redis_maxclients + 32 should not pass LimitNOFILE in the os_required_limits. Notice
@@ -53,19 +53,19 @@ sentinel_quorum: 1
 os_required_parameters:
   - key: vm.overcommit_memory
     value: 1
-  # net.ipv4.tcp_max_syn_backlog = global backlog limit
-  # net.core.somaxconn = backlog by port
-  # So setting the ratio like 2 * net.core.somaxconn = net.ipv4.tcp_max_syn_backlog looks ideal
+  # https://medium.com/@pawilon/tuning-your-linux-kernel-and-haproxy-instance-for-high-loads-1a2105ea553e
   - key: net.core.somaxconn
     value: 10240
   - key: net.ipv4.tcp_max_syn_backlog
-    value: 20480
+    value: 10240
+  - key: net.core.netdev_max_backlog
+    value: 10240
 # if you only want default limits of redis package, leave it like below commented line
 # By the way 10240 is already the default one.
 # os_required_limits: []
 os_required_limits:
   - key: LimitNOFILE
-    value: 102400
+    value: 10240
 os_disable_thp: true
 # Preferred swap size for Redis is as much as swap as memory
 # https://redis.io/topics/admin
