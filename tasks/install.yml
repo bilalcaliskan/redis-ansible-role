@@ -92,13 +92,26 @@
         - (os_required_limits | length > 0)
       loop: "{{ os_required_limits }}"
 
-    - name: Ensure required kernel parameters set correctly
-      sysctl:
-        sysctl_file: /etc/sysctl.d/99-redis.conf
-        reload: true
-        name: "{{ item.key }}"
-        value: "{{ item.value }}"
-      loop: "{{ os_required_parameters }}"
+    #- name: Transfer disable-thp.service file if required
+    #  copy:
+    #    src: disable-thp.service
+    #    dest: /etc/systemd/system/disable-thp.service
+    #    owner: root
+    #    group: root
+    #    mode: 0644
+    #  notify: start and enable disable-thp service
+    #  when: (disable_thp | bool)
+
+    #- name: Ensure required kernel parameters set correctly
+    #  sysctl:
+    #    sysctl_file: /etc/sysctl.d/99-redis.conf
+    #    reload: true
+    #    name: "{{ item.key }}"
+    #    value: "{{ item.value }}"
+    #  loop: "{{ os_required_parameters }}"
+
+    - name: Include tasks from tuned.yml
+      include_tasks: tuned.yml
 
     - name: Include tasks from swap.yml
       include_tasks: swap.yml
