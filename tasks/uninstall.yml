@@ -66,8 +66,8 @@
         state: restarted
         daemon_reload: true
 
-    - name: Set virtual-guest as active tuned profile
-      command: tuned-adm profile virtual-guest
+    - name: Set {{ os_tuned_default_profile }} as active tuned profile
+      command: tuned-adm profile {{ os_tuned_default_profile }}
 
     - name: Disable swap block
       block:

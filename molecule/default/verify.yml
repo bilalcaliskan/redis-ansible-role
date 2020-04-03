@@ -1,8 +1,9 @@
 ---
-# This is an example playbook to execute Ansible tests.
 
 - name: Verify
   hosts: all
+  become: true
+  ignore_errors: true
   tasks:
     - name: Ensure redis and sentinel ports are reachable
       wait_for:

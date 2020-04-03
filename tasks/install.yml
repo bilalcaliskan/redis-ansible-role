@@ -1,5 +1,8 @@
 ---
 
+- name: Include version specific variables for CentOS/RHEL
+  include_vars: "redhat_{{ ansible_distribution_major_version }}.yml"
+
 - name: Get service facts
   service_facts:
 
@@ -8,119 +11,89 @@
     redis_installed: false
   when: ansible_facts.services["redis.service"] is not defined
 
-- name: Install and configure Redis
-  block:
-    - name: Include version specific variables for CentOS/RHEL
-      include_vars: "redhat_{{ ansible_distribution_major_version }}.yml"
+- name: Install the required packages
+  package:
+    name: "{{ os_required_packages }}"
+    state: present
+    use: auto
 
-    - name: Install the required packages
-      yum:
-        name: "{{ os_required_packages }}"
-        state: present
+- name: Install the specified version of Redis from {{ redis_install_repo }} repo
+  yum:
+    name: "redis-{{ redis_version }}"
+    enablerepo: "{{ redis_install_repo }}"
+    state: present
+  when: redis_version != "latest"
 
-    - name: Install the specified version of Redis from {{ redis_install_repo }} repo
-      yum:
-        name: "redis-{{ redis_version }}"
-        enablerepo: "{{ redis_install_repo }}"
-        state: present
-      when: redis_version != "latest"
+- name: Install the latest version of Redis from {{ redis_install_repo }} repo
+  yum:
+    name: redis
+    enablerepo: "{{ redis_install_repo }}"
+    state: present
+  when: redis_version == "latest"
 
-    - name: Install the latest version of Redis from {{ redis_install_repo }} repo
-      yum:
-        name: redis
-        enablerepo: "{{ redis_install_repo }}"
-        state: present
-      when: redis_version == "latest"
+- name: Ensure sentinel data dir exists
+  file:
+    path: "{{ sentinel_data_dir }}"
+    state: directory
+    owner: redis
+    group: redis
+    mode: 0750
+    recurse: true
 
-    - name: Ensure sentinel data dir exists
-      file:
-        path: "{{ sentinel_data_dir }}"
-        state: directory
-        owner: redis
-        group: redis
-        mode: 0750
-        recurse: true
+- name: Transfer template files to the remote location
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/{{ item }}"
+    owner: redis
+    group: redis
+    mode: 0644
+    backup: true
+    setype: redis_conf_t
+  loop:
+    - redis.conf
+    - redis-sentinel.conf
 
-    - name: Transfer template files to the remote location
-      template:
-        src: "{{ item }}.j2"
-        dest: "/etc/{{ item }}"
-        owner: redis
-        group: redis
-        mode: 0644
-        backup: true
-        setype: redis_conf_t
-      loop:
-        - redis.conf
-        - redis-sentinel.conf
+- name: Ensure firewalld is started and enabled
+  service:
+    name: firewalld
+    state: started
+    enabled: true
+  changed_when: false
 
-    - name: Ensure firewalld is started and enabled
-      service:
-        name: firewalld
-        state: restarted
-        enabled: true
+- name: Manage firewalld configuration
+  firewalld:
+    port: "{{ item }}/tcp"
+    permanent: true
+    immediate: true
+    state: enabled
+  loop:
+    - "{{ redis_port }}"
+    - "{{ sentinel_port }}"
 
-    - name: Manage firewalld configuration
-      firewalld:
-        port: "{{ item }}/tcp"
-        permanent: true
-        immediate: true
-        state: enabled
-      ignore_errors: true
-      loop:
-        - "{{ redis_port }}"
-        - "{{ sentinel_port }}"
+- name: Ensure redis and sentinel ports are allowed for SELinux
+  seport:
+    ports: "{{ item }}"
+    proto: tcp
+    setype: redis_port_t
+    state: present
+  loop:
+    - "{{ redis_port }}"
+    - "{{ sentinel_port }}"
 
-    - name: Ensure redis and sentinel ports are allowed
-      seport:
-        ports: "{{ item }}"
-        proto: tcp
-        setype: redis_port_t
-        state: present
-      ignore_errors: true
-      loop:
-        - "{{ redis_port }}"
-        - "{{ sentinel_port }}"
-
-    - name: Ensure limits are passed to systemd unit file
-      lineinfile:
-        path: /etc/systemd/system/redis.service.d/limit.conf
-        regexp: "^{{ item.key }}"
-        line: "{{ item.key }}={{ item.value }}"
-      when:
-        - os_required_limits is defined
-        - (os_required_limits | length > 0)
-      loop: "{{ os_required_limits }}"
-
-    #- name: Transfer disable-thp.service file if required
-    #  copy:
-    #    src: disable-thp.service
-    #    dest: /etc/systemd/system/disable-thp.service
-    #    owner: root
-    #    group: root
-    #    mode: 0644
-    #  notify: start and enable disable-thp service
-    #  when: (disable_thp | bool)
-
-    #- name: Ensure required kernel parameters set correctly
-    #  sysctl:
-    #    sysctl_file: /etc/sysctl.d/99-redis.conf
-    #    reload: true
-    #    name: "{{ item.key }}"
-    #    value: "{{ item.value }}"
-    #  loop: "{{ os_required_parameters }}"
-
-    - name: Include tasks from tuned.yml
-      include_tasks: tuned.yml
-
-    - name: Include tasks from swap.yml
-      include_tasks: swap.yml
-  rescue:
-    - name: Print error message and fail
-      fail:
-        msg: "Got an error inside block, try to rerun tasks with -v option"
+- name: Ensure limits are passed to systemd unit file
+  lineinfile:
+    path: /etc/systemd/system/redis.service.d/limit.conf
+    regexp: "^{{ item.key }}"
+    line: "{{ item.key }}={{ item.value }}"
   when:
-    - ansible_facts.services["redis.service"] is not defined
-    - ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
+    - os_required_limits is defined
+    - (os_required_limits | length > 0)
+  loop: "{{ os_required_limits }}"
+
+- name: Include tasks from tuned.yml
+  include_tasks: tuned.yml
+
+- name: Include tasks from swap.yml
+  include_tasks: swap.yml
 
 ...

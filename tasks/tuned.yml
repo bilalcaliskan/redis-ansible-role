@@ -22,6 +22,7 @@
     state: restarted
     enabled: true
     daemon_reload: true
+  changed_when: false
 
 - name: Check tuned profile
   command: tuned-adm active

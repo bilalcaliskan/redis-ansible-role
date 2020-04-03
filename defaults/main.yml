@@ -1,9 +1,13 @@
 ---
 
+############# Behavioral Parameters #############
 redis_install: true
+
+############# Redis Specific Parameters #############
 redis_port: 6379
 redis_replica_read_only: "yes"
 redis_log_level: notice
+redis_data_dir: /var/lib/redis
 redis_log_file: /var/log/redis/redis.log
 redis_max_memory: 6gb
 redis_max_memory_policy: volatile-ttl
@@ -27,7 +31,6 @@ redis_enable_latency_monitor: true
 redis_latency_monitor_threshold: 300
 redis_slowlog_log_slower_than: 300000
 redis_slowlog_max_len: 1000
-redis_data_dir: /var/lib/redis
 # In high requests-per-second environments you need an high backlog in order
 # to avoid slow clients connections issues. Note that the Linux kernel
 # will silently truncate it to the value of /proc/sys/net/core/somaxconn so
@@ -41,6 +44,7 @@ redis_tcp_backlog: 10240
 redis_maxclients: 10000
 redis_tcp_keepalive: 300
 
+############# Sentinel Specific Parameters #############
 sentinel_port: 16379
 sentinel_cluster_name: sample-cluster
 sentinel_log_file: /var/log/redis/sentinel.log
@@ -48,6 +52,7 @@ sentinel_data_dir: /var/lib/sentinel
 sentinel_down_after_milliseconds: 10000
 sentinel_quorum: 1
 
+############# OS Specific Parameters #############
 # if you don't want to apply any custom kernel parameter for performance, leave it like below commented line
 # os_required_parameters: []
 os_required_parameters:
@@ -60,15 +65,16 @@ os_required_parameters:
     value: 10240
   - key: net.core.netdev_max_backlog
     value: 10240
+# Below parameter is required when uninstalling redis to revert everything
+os_tuned_default_profile: virtual-guest
 # if you only want default limits of redis package, leave it like below commented line
 # By the way 10240 is already the default one.
 # os_required_limits: []
 os_required_limits:
   - key: LimitNOFILE
     value: 10240
-os_disable_thp: true
-# Preferred swap size for Redis is as much as swap as memory
 # https://redis.io/topics/admin
+os_disable_thp: true
 os_disable_swap: true
 # New swap file on the below location will be created only if os_disable_swap is false
 # and current swap space on the system(ansible_swaptotal_mb) is 0 MB.
