@@ -1,5 +1,9 @@
 ---
 
+- name: force systemd to reread configs
+  systemd:
+    daemon_reload: true
+
 - name: start and enable services
   service:
     name: "{{ item }}"
@@ -8,11 +12,5 @@
   loop:
     - redis
     - redis-sentinel
-
-#- name: start and enable disable-thp service
-#  service:
-#    name: disable-thp
-#    state: started
-#    enabled: true
 
 ...

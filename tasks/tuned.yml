@@ -32,6 +32,5 @@
 - name: Set redis-server profile as active profile
   command: tuned-adm profile redis-server
   when: "'Current active profile: redis-server' not in tuned_active.stdout"
-  notify: start and enable services
 
 ...

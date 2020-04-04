@@ -16,9 +16,9 @@ playbook with a global `become: yes`, or invoke the role in your playbook like:
 
 ## Role Variables
 
-Available variables are listed below, along with default values (see `defaults/main.yml`):
+Example parameters are listed below. See defaults/main.yml for all:
 
-        redis_host: 0.0.0.0
+        redis_version: 5.0.7
         redis_port: 6379
         sentinel_port: 16379
         slave_read_only: yes
@@ -51,8 +51,9 @@ This role depends on bilalcaliskan.remi role, so it contains that dependency on 
       roles:
         - role: bilalcaliskan.redis
 
-*Inside `vars/main.yml`*:
+*Override the parameters you need to change inside `vars/main.yml`*:
 
+        redis_version: 5.0.7
         redis_host: 0.0.0.0
         redis_port: 6379
         sentinel_port: 16379

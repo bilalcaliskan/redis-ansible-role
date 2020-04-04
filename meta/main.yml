@@ -21,6 +21,5 @@ dependencies:
     when:
       - (redis_install | bool)
       - ansible_os_family == "RedHat"
-      - ansible_distribution_major_version == "7"
 
 ...

@@ -1,7 +1,7 @@
 ---
 
-- name: Include version specific variables for CentOS/RHEL
-  include_vars: "redhat_{{ ansible_distribution_major_version }}.yml"
+#- name: Include version specific variables for CentOS/RHEL
+#  include_vars: "redhat_{{ ansible_distribution_major_version }}.yml"
 
 - name: Get service facts
   service_facts:
@@ -53,6 +53,16 @@
     - redis.conf
     - redis-sentinel.conf
 
+- name: Ensure redis and sentinel ports are allowed for SELinux
+  seport:
+    ports: "{{ item }}"
+    proto: tcp
+    setype: redis_port_t
+    state: present
+  loop:
+    - "{{ redis_port }}"
+    - "{{ sentinel_port }}"
+
 - name: Ensure firewalld is started and enabled
   service:
     name: firewalld
@@ -69,16 +79,9 @@
   loop:
     - "{{ redis_port }}"
     - "{{ sentinel_port }}"
-
-- name: Ensure redis and sentinel ports are allowed for SELinux
-  seport:
-    ports: "{{ item }}"
-    proto: tcp
-    setype: redis_port_t
-    state: present
-  loop:
-    - "{{ redis_port }}"
-    - "{{ sentinel_port }}"
+  notify:
+    - force systemd to reread configs
+    - start and enable services
 
 - name: Ensure limits are passed to systemd unit file
   lineinfile:
