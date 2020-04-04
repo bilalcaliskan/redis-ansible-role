@@ -9,8 +9,6 @@ remi_public_key_url: https://rpms.remirepo.net/RPM-GPG-KEY-remi
 
 ############# Redis Specific Parameters #############
 redis_port: 6379
-# Currently latest redis on Remi repository is 5.0.7
-redis_version: 5.0.7
 redis_install_repo: remi
 redis_replica_read_only: "yes"
 redis_log_level: notice
