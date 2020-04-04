@@ -59,6 +59,9 @@
     proto: tcp
     setype: redis_port_t
     state: present
+  when:
+    - ansible_selinux is defined
+    - ansible_selinux | bool
   loop:
     - "{{ redis_port }}"
     - "{{ sentinel_port }}"
