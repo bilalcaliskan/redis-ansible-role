@@ -6,7 +6,7 @@
 - name: Get service facts
   service_facts:
 
-- name: Check if Redis service file exists
+- name: Set fact before installation
   set_fact:
     redis_installed: false
   when: ansible_facts.services["redis.service"] is not defined
@@ -52,6 +52,9 @@
   loop:
     - redis.conf
     - redis-sentinel.conf
+  notify:
+    - force systemd to reread configs
+    - start and enable services
 
 - name: Ensure redis and sentinel ports are allowed for SELinux
   seport:
@@ -79,9 +82,6 @@
   loop:
     - "{{ redis_port }}"
     - "{{ sentinel_port }}"
-  notify:
-    - force systemd to reread configs
-    - start and enable services
 
 - name: Ensure limits are passed to systemd unit file
   lineinfile:
@@ -98,5 +98,10 @@
 
 - name: Include tasks from swap.yml
   include_tasks: swap.yml
+
+- name: Set fact after installation to notify handlers
+  set_fact:
+    redis_installed: true
+  when: ansible_facts.services["redis.service"] is defined
 
 ...
