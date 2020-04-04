@@ -47,7 +47,6 @@
     owner: redis
     group: redis
     mode: 0644
-    backup: true
     setype: redis_conf_t
   loop:
     - redis.conf
