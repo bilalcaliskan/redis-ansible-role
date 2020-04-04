@@ -51,9 +51,7 @@
   loop:
     - redis.conf
     - redis-sentinel.conf
-  notify:
-    - force systemd to reread configs
-    - start and enable services
+  changed_when: false
 
 - name: Ensure redis and sentinel ports are allowed for SELinux
   seport:
@@ -97,6 +95,19 @@
 
 - name: Include tasks from swap.yml
   include_tasks: swap.yml
+
+- name: force systemd to reread configs
+  systemd:
+    daemon_reload: true
+
+- name: start and enable services
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop:
+    - redis
+    - redis-sentinel
 
 - name: Set fact after installation to notify handlers
   set_fact:
