@@ -73,6 +73,17 @@ This role depends on bilalcaliskan.remi role, so it contains that dependency on 
         cluster_name: sample-cluster
         quorum: 1
 
+## Playbook for uninstall
+
+    - hosts: all
+      become: true
+      roles:
+        - { role: bilalcaliskan.node_exporter }
+
+*Inside `vars/main.yml`*:
+
+      redis_install: false
+
 ## License
 
 MIT / BSD
