@@ -95,7 +95,4 @@ os_disable_swap: true
 os_swap_file_path: /swapfile
 os_swap_file_size_mb: "{{ (ansible_memtotal_mb / 2) | round | int }}"
 
-############# Remi Repository Parameters #############
-
-
 ...
