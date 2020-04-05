@@ -1,5 +1,6 @@
 ---
 
-- src: bilalcaliskan.remi
+# Get role from galaxy
+- name: bilalcaliskan.remi
 
 ...
