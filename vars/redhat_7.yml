@@ -1,6 +1,6 @@
 ---
 
-# Currently latest Redis version for Centos7 on Remi repository is 5.0.7
-redis_version: 5.0.7
+# Currently latest Redis version for Centos7 on Remi repository is ?
+redis_version: latest
 
 ...
