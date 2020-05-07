@@ -23,6 +23,6 @@ dependencies:
       public_key_url: "{{ remi_public_key_url }}"
     when:
       - (redis_install | bool)
-      - ansible_os_family == "RedHat" and ansible_distribution_major_version == 7
+      - ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
 
 ...
