@@ -13,24 +13,44 @@
     - name: Include version specific variables for CentOS/RHEL
       include_vars: "redhat_{{ ansible_distribution_major_version }}.yml"
 
-    - name: Ensure redis and redis-sentinel services are stopped and disabled
+    - name: Ensure redis service is stopped and disabled
       service:
-        name: "{{ item }}"
+        name: redis
         state: stopped
         enabled: false
       loop:
         - redis
         - redis-sentinel
 
+    - name: Ensure redis-sentinel service is stopped and disabled
+      service:
+        name: redis-sentinel
+        state: stopped
+        enabled: false
+      when: sentinel_enabled | bool
+
     - name: Ensure firewalld configuration is reverted
       firewalld:
-        port: "{{ item }}/tcp"
+        port: "{{ redis_port }}/tcp"
         permanent: true
         immediate: true
         state: disabled
-      loop:
-        - "{{ redis_port }}"
-        - "{{ sentinel_port }}"
+
+    - name: Ensure firewalld configuration is reverted when sentinel enabled
+      firewalld:
+        port: "{{ sentinel_port }}/tcp"
+        permanent: true
+        immediate: true
+        state: disabled
+      when: sentinel_enabled | bool
+
+    - name: Ensure firewalld configuration is reverted when cluster enabled
+      firewalld:
+        port: "{{ cluster_bus_port }}/tcp"
+        permanent: true
+        immediate: true
+        state: disabled
+      when: cluster_enabled | bool
 
     - name: Remove transferred files and created directories
       file:
@@ -39,10 +59,17 @@
       loop:
         - /etc/redis.conf
         - /etc/redis-sentinel.conf
-        - "{{ sentinel_data_dir }}"
         - "{{ redis_log_file }}"
         - "{{ sentinel_log_file }}"
         - /etc/tuned/redis-server
+
+    - name: Remove transferred files and created directories when sentinel enabled
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "{{ sentinel_data_dir }}"
+        - "{{ sentinel_log_file }}"
 
     - name: Remove redis package
       yum:

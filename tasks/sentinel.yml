@@ -1,0 +1,45 @@
+---
+
+- name: Ensure sentinel data dir exists
+  file:
+    path: "{{ sentinel_data_dir }}"
+    state: directory
+    owner: redis
+    group: redis
+    mode: 0750
+    recurse: true
+
+- name: Transfer redis-sentinel.conf template file to the remote location
+  template:
+    src: redis-sentinel.conf.j2
+    dest: /etc/redis-sentinel.conf
+    owner: redis
+    group: redis
+    mode: 0644
+    setype: redis_conf_t
+  changed_when: false
+
+- name: Ensure sentinel port is allowed for SELinux
+  seport:
+    ports: "{{ sentinel_port }}"
+    proto: tcp
+    setype: redis_port_t
+    state: present
+  when:
+    - ansible_selinux is defined
+    - ansible_selinux | bool
+
+- name: Manage firewalld configuration when sentinel enabled
+  firewalld:
+    port: "{{ sentinel_port }}/tcp"
+    permanent: true
+    immediate: true
+    state: enabled
+
+- name: start and enable redis-sentinel service
+  service:
+    name: redis-sentinel
+    state: started
+    enabled: true
+
+...

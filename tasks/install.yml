@@ -31,40 +31,25 @@
     state: present
   when: redis_version == "latest"
 
-- name: Ensure sentinel data dir exists
-  file:
-    path: "{{ sentinel_data_dir }}"
-    state: directory
-    owner: redis
-    group: redis
-    mode: 0750
-    recurse: true
-
-- name: Transfer template files to the remote location
+- name: Transfer redis.conf template file to the remote location
   template:
-    src: "{{ item }}.j2"
-    dest: "/etc/{{ item }}"
+    src: redis.conf.j2
+    dest: /etc/redis.conf
     owner: redis
     group: redis
     mode: 0644
     setype: redis_conf_t
-  loop:
-    - redis.conf
-    - redis-sentinel.conf
   changed_when: false
 
-- name: Ensure redis and sentinel ports are allowed for SELinux
+- name: Ensure redis port is allowed for SELinux
   seport:
-    ports: "{{ item }}"
+    ports: "{{ redis_port }}"
     proto: tcp
     setype: redis_port_t
     state: present
   when:
     - ansible_selinux is defined
     - ansible_selinux | bool
-  loop:
-    - "{{ redis_port }}"
-    - "{{ sentinel_port }}"
 
 - name: Ensure firewalld is started and enabled
   service:
@@ -75,13 +60,10 @@
 
 - name: Manage firewalld configuration
   firewalld:
-    port: "{{ item }}/tcp"
+    port: "{{ redis_port }}/tcp"
     permanent: true
     immediate: true
     state: enabled
-  loop:
-    - "{{ redis_port }}"
-    - "{{ sentinel_port }}"
 
 - name: Ensure limits are passed to systemd unit file
   lineinfile:
@@ -93,6 +75,21 @@
     - (os_required_limits | length > 0)
   loop: "{{ os_required_limits }}"
 
+- name: Include tasks from sentinel.yml
+  include_tasks: sentinel.yml
+  when:
+    - sentinel_enabled | bool
+    - not cluster_enabled | bool
+
+- name: Include tasks from cluster.yml
+  include_tasks: cluster.yml
+  when:
+    - cluster_enabled | bool
+    - not sentinel_enabled | bool
+
+- name: Include tasks from tuned.yml
+  include_tasks: tuned.yml
+
 - name: Include tasks from tuned.yml
   include_tasks: tuned.yml
 
@@ -103,14 +100,11 @@
   systemd:
     daemon_reload: true
 
-- name: start and enable services
+- name: start and enable redis service
   service:
-    name: "{{ item }}"
+    name: redis
     state: started
     enabled: true
-  loop:
-    - redis
-    - redis-sentinel
 
 - name: Set fact after installation to notify handlers
   set_fact:
