@@ -2,5 +2,6 @@
 
 # Currently latest Redis version for Centos8 on Remi repository is 6
 redis_version: latest
+redis_install_repo: AppStream
 
 ...

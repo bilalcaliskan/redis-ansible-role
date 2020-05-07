@@ -2,5 +2,6 @@
 
 # Currently latest Redis version for Centos7 on Remi repository is ?
 redis_version: latest
+redis_install_repo: remi
 
 ...
