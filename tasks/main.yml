@@ -1,5 +1,14 @@
 ---
 
+- name: Fail when both cluster_enabled and sentinel_enabled true
+  fail:
+    msg: >
+      Both cluster_enabled and sentinel_enabled flags can not be true. Set one of
+      them or both as false.
+  when:
+    - sentinel_enabled | bool
+    - cluster_enabled | bool
+
 - name: Include install.yml file conditionally
   include_tasks: install.yml
   when: (redis_install | bool)
