@@ -90,9 +90,6 @@
 - name: Include tasks from tuned.yml
   include_tasks: tuned.yml
 
-- name: Include tasks from tuned.yml
-  include_tasks: tuned.yml
-
 - name: Include tasks from swap.yml
   include_tasks: swap.yml
 
