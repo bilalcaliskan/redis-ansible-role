@@ -3,7 +3,7 @@ port {{ redis_port }}
 tcp-backlog {{ redis_tcp_backlog }}
 tcp-keepalive {{ redis_tcp_keepalive }}
 
-{% if groups[hostvars[inventory_hostname].group_names[0]][0] != inventory_hostname %}
+{% if (sentinel_enabled and not cluster_enabled) and groups[hostvars[inventory_hostname].group_names[0]][0] != inventory_hostname %}
 replicaof {{ groups[hostvars[inventory_hostname].group_names[0]][0] }} {{ redis_port }}
 replica-read-only {{ redis_replica_read_only }}
 {% endif %}
@@ -14,6 +14,18 @@ logfile {{ redis_log_file }}
 maxmemory {{ redis_max_memory }}
 maxmemory-policy {{ redis_max_memory_policy }}
 maxclients {{ redis_maxclients }}
+
+{% if cluster_enabled is defined and (cluster_enabled and not sentinel_enabled) %}
+cluster-enabled yes
+cluster-config-file {{ cluster_config_file }}
+cluster-node-timeout {{ cluster_node_timeout }}
+cluster-replica-validity-factor {{ cluster_replica_validity_factor }}
+cluster-migration-barrier {{ cluster_migration_barrier }}
+cluster-require-full-coverage {{ cluster_require_full_coverage }}
+cluster-replica-no-failover {{ cluster_replica_no_failover }}
+{% else %}
+cluster-enabled no
+{% endif %}
 
 databases {{ redis_num_of_databases }}
 {% if redis_enable_rdb is defined and redis_enable_rdb %}

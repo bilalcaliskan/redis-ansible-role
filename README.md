@@ -73,6 +73,10 @@ This role depends on bilalcaliskan.remi role, so it contains that dependency on 
         cluster_name: sample-cluster
         quorum: 1
 
+## Installing with Redis Sentinel
+
+## Installing with Redis Cluster
+
 ## Playbook for uninstall
 
     - hosts: all

@@ -50,12 +50,24 @@ redis_maxclients: 10000
 redis_tcp_keepalive: 300
 
 ############# Sentinel Specific Parameters #############
+sentinel_enabled: false
 sentinel_port: 16379
 sentinel_cluster_name: sample-cluster
 sentinel_log_file: /var/log/redis/sentinel.log
 sentinel_data_dir: /var/lib/sentinel
 sentinel_down_after_milliseconds: 10000
 sentinel_quorum: 1
+
+############# Cluster Specific Parameters #############
+cluster_enabled: true
+cluster_bus_port: 16379
+# Below values are the defaults. Check http://download.redis.io/redis-stable/redis.conf
+cluster_config_file: nodes.conf
+cluster_node_timeout: 15000
+cluster_replica_validity_factor: 10
+cluster_migration_barrier: 1
+cluster_require_full_coverage: "yes"
+cluster_replica_no_failover: "no"
 
 ############# OS Specific Parameters #############
 os_required_packages:

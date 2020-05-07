@@ -1,0 +1,20 @@
+---
+
+- name: Ensure cluster bus port is allowed for SELinux
+  seport:
+    ports: "{{ cluster_bus_port }}"
+    proto: tcp
+    setype: redis_port_t
+    state: present
+  when:
+    - ansible_selinux is defined
+    - ansible_selinux | bool
+
+- name: Manage firewalld configuration when cluster enabled
+  firewalld:
+    port: "{{ cluster_bus_port }}/tcp"
+    permanent: true
+    immediate: true
+    state: enabled
+
+...
