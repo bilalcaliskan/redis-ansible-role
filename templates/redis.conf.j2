@@ -3,7 +3,7 @@ port {{ redis_port }}
 tcp-backlog {{ redis_tcp_backlog }}
 tcp-keepalive {{ redis_tcp_keepalive }}
 
-{% if groups[hostvars[inventory_hostname].group_names[0]][0] != inventory_hostname %}
+{% if (sentinel_enabled and not cluster_enabled) and groups[hostvars[inventory_hostname].group_names[0]][0] != inventory_hostname %}
 replicaof {{ groups[hostvars[inventory_hostname].group_names[0]][0] }} {{ redis_port }}
 replica-read-only {{ redis_replica_read_only }}
 {% endif %}
