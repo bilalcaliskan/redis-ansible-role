@@ -61,13 +61,13 @@ sentinel_quorum: 1
 ############# Cluster Specific Parameters #############
 cluster_enabled: true
 cluster_bus_port: 16379
+# Below values are the defaults. Check http://download.redis.io/redis-stable/redis.conf
 cluster_config_file: nodes.conf
 cluster_node_timeout: 15000
 cluster_replica_validity_factor: 10
 cluster_migration_barrier: 1
 cluster_require_full_coverage: "yes"
 cluster_replica_no_failover: "no"
-cluster_allow_reads_when_down: "no"
 
 ############# OS Specific Parameters #############
 os_required_packages:
