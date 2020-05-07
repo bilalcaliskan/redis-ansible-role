@@ -17,7 +17,7 @@ redis_log_file: /var/log/redis/redis.log
 redis_max_memory: 6gb
 redis_max_memory_policy: volatile-ttl
 redis_num_of_databases: 16
-redis_enable_rdb: false
+redis_enable_rdb: true
 redis_rdb_params:
   - 900 1
   - 300 10
