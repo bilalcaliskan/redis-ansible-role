@@ -22,7 +22,7 @@
         - 6379
         - 16379
 
-    - Ensure redis-py python package is installed
+    - name: Ensure redis-py python package is installed
       pip:
         name: redis-py
 
