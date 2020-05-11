@@ -22,25 +22,9 @@
         - 6379
         - 16379
 
-    - name: Ensure redis-py python package is installed
-      pip:
-        name: redis-py
-        executable: pip3
-
-    - name: Configure local redis to have 10000 max clients
-      redis:
-        command: config
-        name: maxclients
-        value: 10000
-
     - name: Set couple of keys
       command: "redis-cli {{ item.key }} {{ item.value }}"
       loop: "{{ data }}"
       when: connectivity_result is succeeded
-
-    - name: Flush all the redis db
-      redis:
-        command: flush
-        flush_mode: all
 
 ...
