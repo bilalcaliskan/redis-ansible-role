@@ -25,6 +25,7 @@
     - name: Ensure redis-py python package is installed
       pip:
         name: redis-py
+        executable: pip3
 
     - name: Configure local redis to have 10000 max clients
       redis:
