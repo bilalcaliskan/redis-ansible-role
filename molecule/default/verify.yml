@@ -22,6 +22,10 @@
         - 6379
         - 16379
 
+    - Ensure redis-py python package is installed
+      pip:
+        name: redis-py
+
     - name: Configure local redis to have 10000 max clients
       redis:
         command: config
