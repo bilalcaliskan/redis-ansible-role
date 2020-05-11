@@ -4,8 +4,8 @@
 redis_install: true
 
 ############# Remi Repository Specific Parameters #############
-remi_repo_url: http://fr2.rpmfind.net/linux/remi/enterprise/$releasever/remi/$basearch/
-remi_public_key_url: https://rpms.remirepo.net/RPM-GPG-KEY-remi
+repo_url: https://mirror.netsite.dk/remi/enterprise/$releasever/remi/$basearch/
+public_key_url: https://rpms.remirepo.net/RPM-GPG-KEY-remi
 
 ############# Redis Specific Parameters #############
 redis_port: 6379

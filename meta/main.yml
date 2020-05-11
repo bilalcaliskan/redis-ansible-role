@@ -18,7 +18,6 @@ galaxy_info:
 
 dependencies:
   - role: bilalcaliskan.remi
-    vars:
       repo_url: "{{ remi_repo_url }}"
       public_key_url: "{{ remi_public_key_url }}"
     when:
