@@ -17,6 +17,7 @@
         host: localhost
         port: "{{ item }}"
         timeout: 3
+      register: connectivity_result
       loop:
         - 6379
         - 16379
@@ -30,6 +31,7 @@
     - name: Set couple of keys
       command: "redis-cli {{ item.key }} {{ item.value }}"
       loop: "{{ data }}"
+      when: connectivity_result is succeeded
 
     - name: Flush all the redis db
       redis:
