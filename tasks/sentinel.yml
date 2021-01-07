@@ -35,6 +35,7 @@
     permanent: true
     immediate: true
     state: enabled
+  when: (firewalld_enabled | bool)
 
 - name: start and enable redis-sentinel service
   service:

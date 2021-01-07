@@ -2,7 +2,7 @@
 
 ############# Behavioral Parameters #############
 redis_install: true
-start_firewalld: true
+firewalld_enabled: true
 
 
 ############# Remi Repository Specific Parameters #############
