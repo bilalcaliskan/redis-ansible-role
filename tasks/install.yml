@@ -51,19 +51,22 @@
     - ansible_selinux is defined
     - ansible_selinux | bool
 
-- name: Ensure firewalld is started and enabled
-  service:
-    name: firewalld
-    state: started
-    enabled: true
-  changed_when: false
+- name: Firewalld related block
+  block:
+  - name: Ensure firewalld is started and enabled
+    service:
+      name: firewalld
+      state: started
+      enabled: true
+    changed_when: false
 
-- name: Manage firewalld configuration
-  firewalld:
-    port: "{{ redis_port }}/tcp"
-    permanent: true
-    immediate: true
-    state: enabled
+  - name: Manage firewalld configuration
+    firewalld:
+      port: "{{ redis_port }}/tcp"
+      permanent: true
+      immediate: true
+      state: enabled
+  when: (start_firewalld | bool)
 
 - name: Ensure limits are passed to systemd unit file
   lineinfile:
@@ -103,9 +106,7 @@
     state: started
     enabled: true
 
-- name: Set fact after installation to notify handlers
+- name: Set fact after installation
   set_fact:
     redis_installed: true
   when: ansible_facts.services["redis.service"] is defined
-
-...

@@ -29,28 +29,33 @@
         enabled: false
       when: sentinel_enabled | bool
 
-    - name: Ensure firewalld configuration is reverted
+    - name: Revoke firewalld permissions if firewalld is running
       firewalld:
         port: "{{ redis_port }}/tcp"
         permanent: true
         immediate: true
         state: disabled
+      when: ansible_facts.services["firewalld.service"].state == "running"
 
-    - name: Ensure firewalld configuration is reverted when sentinel enabled
+    - name: Revoke firewalld permissions if firewalld is running when sentinel enabled
       firewalld:
         port: "{{ sentinel_port }}/tcp"
         permanent: true
         immediate: true
         state: disabled
-      when: sentinel_enabled | bool
+      when:
+        - sentinel_enabled | bool
+        - ansible_facts.services["firewalld.service"].state == "running"
 
-    - name: Ensure firewalld configuration is reverted when cluster enabled
+    - name: Revoke firewalld permissions if firewalld is running when cluster enabled
       firewalld:
         port: "{{ cluster_bus_port }}/tcp"
         permanent: true
         immediate: true
         state: disabled
-      when: cluster_enabled | bool
+      when:
+        - cluster_enabled | bool
+        - ansible_facts.services["firewalld.service"].state == "running"
 
     - name: Remove transferred files and created directories
       file:

@@ -2,10 +2,13 @@
 
 ############# Behavioral Parameters #############
 redis_install: true
+start_firewalld: true
+
 
 ############# Remi Repository Specific Parameters #############
 remi_repo_url: "https://mirror.netsite.dk/remi/enterprise/$releasever/remi/$basearch/"
 remi_public_key_url: https://rpms.remirepo.net/RPM-GPG-KEY-remi
+
 
 ############# Redis Specific Parameters #############
 redis_port: 6379
@@ -49,8 +52,9 @@ redis_tcp_backlog: 10240
 redis_maxclients: 10000
 redis_tcp_keepalive: 300
 
+
 ############# Sentinel Specific Parameters #############
-sentinel_enabled: false
+sentinel_enabled: true
 sentinel_port: 16379
 sentinel_cluster_name: sample-cluster
 sentinel_log_file: /var/log/redis/sentinel.log
@@ -58,8 +62,9 @@ sentinel_data_dir: /var/lib/sentinel
 sentinel_down_after_milliseconds: 10000
 sentinel_quorum: 1
 
+
 ############# Cluster Specific Parameters #############
-cluster_enabled: true
+cluster_enabled: false
 cluster_bus_port: 16379
 # Below values are the defaults. Check http://download.redis.io/redis-stable/redis.conf
 cluster_config_file: nodes.conf
@@ -68,6 +73,7 @@ cluster_replica_validity_factor: 10
 cluster_migration_barrier: 1
 cluster_require_full_coverage: "yes"
 cluster_replica_no_failover: "no"
+
 
 ############# OS Specific Parameters #############
 os_required_packages:
@@ -106,5 +112,3 @@ os_disable_swap: true
 # and current swap space on the system(ansible_swaptotal_mb) is 0 MB.
 os_swap_file_path: /swapfile
 os_swap_file_size_mb: "{{ (ansible_memtotal_mb / 2) | round | int }}"
-
-...

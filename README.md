@@ -4,90 +4,89 @@
 
 Installs and configures Redis with Sentinel to provide high availability on RHEL/CentOS servers.
 
-## Requirements
+### Requirements
 
 No special requirements; note that this role requires root access, so either run it in a
-playbook with a global `become: yes`, or invoke the role in your playbook like:
+playbook with a global `become: true`, or invoke the role in your playbook like:
 
-    - hosts: all
-      become: true
-      roles:
-        - role: bilalcaliskan.redis
+```yaml
+- hosts: all
+  become: true
+  roles:
+    - role: bilalcaliskan.redis
+      vars:
+        simple_role_var: foo
+```
 
-## Role Variables
+### Role Variables
 
-Example parameters are listed below. See defaults/main.yml for all:
+See the default values in [defaults/main.yml](defaults/main.yml). You can overwrite them in [vars/main.yml](vars/main.yml) if neccessary or you can set them while running playbook.
 
-        redis_version: 5.0.7
-        redis_port: 6379
-        sentinel_port: 16379
-        slave_read_only: yes
-        redis_log_level: verbose
-        redis_log_file: /var/log/redis/redis.log
-        sentinel_log_file: /var/log/redis/sentinel.log
-        max_memory: 6gb
-        max_memory_policy: volatile-ttl
-        num_of_databases: 16
-        stop_writes_on_bgsave_error: yes
-        enable_rdbcompression: yes
-        enable_rdbchecksum: yes
-        enable_appendonly: no
-        redis_data_dir: /var/lib/redis
-        sentinel_data_dir: /tmp
-        cluster_name: sample-cluster
-        quorum: 1
+> Please note that this role will ensure that `firewalld` systemd service on your servers are started and enabled. If your `firewalld` services are stopped and disabled, please modify below variable as false when running playbook:  
+> ```yaml  
+> start_firewalld: false
 
 
 ## Dependencies
 
-This role depends on bilalcaliskan.remi role, so it contains that dependency on meta/main.yml.
+This role depends on [bilalcaliskan.remi](https://galaxy.ansible.com/bilalcaliskan/remi) role, so it contains that dependency on meta/main.yml.
 
-## Example Playbook
+### Example Inventory File
 
-    - hosts: all
-      become: true
-      vars_files:
-        - vars/main.yml
-      roles:
-        - role: bilalcaliskan.redis
+```
+[redis]
+node01.example.com
+node02.example.com
+node03.example.com
+```
 
-*Override the parameters you need to change inside `vars/main.yml`*:
+### Example Playbook File For Installation With `Standalone Mode`
+```yaml
+- hosts: redis
+  become: true
+  roles:
+    - role: bilalcaliskan.redis
+      vars:
+        redis_install: true
+        sentinel_enabled: false
+        cluster_enabled: false
+```
 
-        redis_version: 5.0.7
-        redis_host: 0.0.0.0
-        redis_port: 6379
-        sentinel_port: 16379
-        slave_read_only: yes
-        redis_log_level: verbose
-        redis_log_file: /var/log/redis/redis.log
-        sentinel_log_file: /var/log/redis/sentinel.log
-        max_memory: 6gb
-        max_memory_policy: volatile-ttl
-        num_of_databases: 16
-        stop_writes_on_bgsave_error: yes
-        enable_rdbcompression: yes
-        enable_rdbchecksum: yes
-        enable_appendonly: no
-        redis_data_dir: /var/lib/redis
-        sentinel_data_dir: /tmp
-        cluster_name: sample-cluster
-        quorum: 1
+### Example Playbook File For Installation With `Sentinel Mode`
+```yaml
+- hosts: redis
+  become: true
+  roles:
+    - role: bilalcaliskan.redis
+      vars:
+        redis_install: true
+        sentinel_enabled: true
+        cluster_enabled: false
+```
 
-## Installing with Redis Sentinel
+### Example Playbook File For Installation With `Cluster Mode`
+```yaml
+- hosts: redis
+  become: true
+  roles:
+    - role: bilalcaliskan.redis
+      vars:
+        redis_install: true
+        sentinel_enabled: false
+        cluster_enabled: true
+```
 
-## Installing with Redis Cluster
+### Example Playbook File For `Uninstallation`
 
-## Playbook for uninstall
+```yaml
+- hosts: redis
+  become: true
+  roles:
+    - role: bilalcaliskan.redis
+      vars:
+        redis_install: false
+```
 
-    - hosts: all
-      become: true
-      roles:
-        - { role: bilalcaliskan.node_exporter }
-
-*Inside `vars/main.yml`*:
-
-      redis_install: false
-
-## License
+### License
 
 MIT / BSD
