@@ -57,6 +57,16 @@
         - cluster_enabled | bool
         - ansible_facts.services["firewalld.service"].state == "running"
 
+    - name: Revoke redis port for SELinux
+      seport:
+        ports: "{{ redis_port }}"
+        proto: tcp
+        setype: redis_port_t
+        state: absent
+      when:
+        - ansible_selinux is defined
+        - ansible_selinux | bool
+
     - name: Remove transferred files and created directories
       file:
         path: "{{ item }}"

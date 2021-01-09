@@ -1,0 +1,18 @@
+---
+
+- name: restart tuned service
+  systemd:
+    name: tuned
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  changed_when: false
+
+- name: check tuned profile
+  command: tuned-adm active
+  register: tuned_active
+  changed_when: false
+
+- name: set redis-server profile as active profile
+  command: tuned-adm profile redis-server
+  when: "'Current active profile: redis-server' not in tuned_active.stdout"
