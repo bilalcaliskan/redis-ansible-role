@@ -16,5 +16,3 @@
 - name: Include uninstall.yml file conditionally
   include_tasks: uninstall.yml
   when: not (redis_install | bool)
-
-...

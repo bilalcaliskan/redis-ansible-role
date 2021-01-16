@@ -10,11 +10,13 @@
   file:
     path: /etc/tuned/redis-server
     state: directory
+    mode: 0755
 
 - name: Transfer template file to the remote location
   template:
     src: tuned.conf.j2
     dest: /etc/tuned/redis-server/tuned.conf
+    mode: 0644
   notify:
     - restart tuned service
     - check tuned profile

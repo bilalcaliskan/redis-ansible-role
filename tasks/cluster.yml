@@ -17,5 +17,3 @@
     immediate: true
     state: enabled
   when: (firewalld_enabled | bool)
-
-...

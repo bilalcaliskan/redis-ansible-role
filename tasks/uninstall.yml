@@ -137,5 +137,3 @@
   when:
     - ansible_facts.services["redis.service"] is defined
     - ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
-
-...

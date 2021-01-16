@@ -60,19 +60,19 @@
 
 - name: Firewalld related block
   block:
-  - name: Ensure firewalld is started and enabled
-    service:
-      name: firewalld
-      state: started
-      enabled: true
-    changed_when: false
+    - name: Ensure firewalld is started and enabled
+      service:
+        name: firewalld
+        state: started
+        enabled: true
+      changed_when: false
 
-  - name: Manage firewalld configuration
-    firewalld:
-      port: "{{ redis_port }}/tcp"
-      permanent: true
-      immediate: true
-      state: enabled
+    - name: Manage firewalld configuration
+      firewalld:
+        port: "{{ redis_port }}/tcp"
+        permanent: true
+        immediate: true
+        state: enabled
   when: (firewalld_enabled | bool)
 
 - name: Ensure limits are passed to systemd unit file

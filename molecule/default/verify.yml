@@ -26,5 +26,3 @@
       command: "redis-cli {{ item.key }} {{ item.value }}"
       loop: "{{ data }}"
       when: connectivity_result is succeeded
-
-...

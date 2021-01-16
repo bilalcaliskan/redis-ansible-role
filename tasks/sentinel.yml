@@ -42,5 +42,3 @@
     name: redis-sentinel
     state: started
     enabled: true
-
-...

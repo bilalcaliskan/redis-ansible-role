@@ -1,6 +1,6 @@
 ## Redis Ansible Role
 
-[![Build Status](https://travis-ci.org/bilalcaliskan/redis-ansible-role.svg?branch=master)](https://travis-ci.org/bilalcaliskan/redis-ansible-role)
+[![CI](https://github.com/bilalcaliskan/redis-ansible-role/workflows/CI/badge.svg?event=push)](https://github.com/bilalcaliskan/redis-ansible-role/actions?query=workflow%3ACI)
 
 Installs and configures Redis with Sentinel to provide high availability on RHEL/CentOS servers.
 
