@@ -6,6 +6,7 @@ rules:
   line-length:
     max: 120
     level: warning
+  new-lines: disable
 
 ignore: |
   .github/stale.yml
