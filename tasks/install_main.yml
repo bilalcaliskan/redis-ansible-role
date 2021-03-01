@@ -1,8 +1,5 @@
 ---
 
-- name: Include version specific variables for CentOS/RHEL
-  include_vars: "{{ ansible_os_family | lower }}_{{ ansible_distribution_major_version }}.yml"
-
 - name: Get service facts
   service_facts:
 
@@ -11,25 +8,8 @@
     redis_installed: false
   when: ansible_facts.services["redis.service"] is not defined
 
-- name: Install the required packages
-  package:
-    name: "{{ os_required_packages }}"
-    state: present
-    use: auto
-
-- name: Install the specified version of Redis from {{ redis_install_repo }} repo
-  yum:
-    name: "redis-{{ redis_version }}"
-    enablerepo: "{{ redis_install_repo }}"
-    state: present
-  when: redis_version != "latest"
-
-- name: Install the latest version of Redis from {{ redis_install_repo }} repo
-  yum:
-    name: redis
-    enablerepo: "{{ redis_install_repo }}"
-    state: present
-  when: redis_version == "latest"
+- name: Include distribution specific tasks
+  include_tasks: "install_{{ ansible_os_family | lower }}.yml"
 
 - name: Transfer redis.conf template file to the remote location
   template:
@@ -77,8 +57,9 @@
 
 - name: Ensure limits are passed to systemd unit file
   lineinfile:
-    path: /etc/systemd/system/redis.service.d/limit.conf
+    path: "{{ systemd_conf_path }}"
     regexp: "^{{ item.key }}"
+    insertafter: '^[Service]'
     line: "{{ item.key }}={{ item.value }}"
   when:
     - os_required_limits is defined
@@ -103,17 +84,34 @@
 - name: Include tasks from swap.yml
   include_tasks: swap.yml
 
-- name: force systemd to reread configs
+- name: Force systemd to reread configs
   systemd:
     daemon_reload: true
 
-- name: start and enable redis service
-  service:
-    name: redis
-    state: started
-    enabled: true
+- name: Start and enable redis on Redhat block
+  block:
+    - name: Start and enable redis service on RedHat
+      service:
+        name: redis
+        state: started
+        enabled: true
 
-- name: Set fact after installation
-  set_fact:
-    redis_installed: true
-  when: ansible_facts.services["redis.service"] is defined
+    - name: Set fact after installation
+      set_fact:
+        redis_installed: true
+      when: ansible_facts.services["redis.service"] is defined
+  when: (ansible_os_family | lower) == "redhat"
+
+- name: Start and enable redis on Debian block
+  block:
+    - name: Start and enable redis-server service on Debian
+      service:
+        name: redis-server
+        state: started
+        enabled: true
+
+    - name: Set fact after installation
+      set_fact:
+        redis_installed: true
+      when: ansible_facts.services["redis-server.service"] is defined
+  when: (ansible_os_family | lower) == "debian"

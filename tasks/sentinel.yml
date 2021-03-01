@@ -12,7 +12,7 @@
 - name: Transfer redis-sentinel.conf template file to the remote location
   template:
     src: redis-sentinel.conf.j2
-    dest: /etc/redis-sentinel.conf
+    dest: "{{ sentinel_dest_file }}"
     owner: redis
     group: redis
     mode: 0644

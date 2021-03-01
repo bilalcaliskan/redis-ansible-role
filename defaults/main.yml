@@ -75,15 +75,6 @@ cluster_replica_no_failover: "no"
 
 
 ############# OS Specific Parameters #############
-os_required_packages:
-  - wget
-  - net-tools
-  - telnet
-  - firewalld
-  - vim
-  - setroubleshoot-server
-  - selinux-policy-devel
-  - tuned
 # if you don't want to apply any custom kernel parameter for performance, leave it like below commented line
 # os_required_parameters: []
 os_required_parameters:

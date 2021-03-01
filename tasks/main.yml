@@ -9,10 +9,10 @@
     - sentinel_enabled | bool
     - cluster_enabled | bool
 
-- name: Include install.yml file conditionally
-  include_tasks: install.yml
+- name: Include install_main.yml file conditionally
+  include_tasks: install_main.yml
   when: (redis_install | bool)
 
-- name: Include uninstall.yml file conditionally
-  include_tasks: uninstall.yml
+- name: Include uninstall_main.yml file conditionally
+  include_tasks: uninstall_main.yml
   when: not (redis_install | bool)

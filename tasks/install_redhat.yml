@@ -1,0 +1,25 @@
+---
+
+- name: Include version specific variables for CentOS/RHEL
+  include_vars: "{{ ansible_os_family | lower }}_{{ ansible_distribution_major_version }}.yml"
+
+- name: Install the required packages
+  yum:
+    name: "{{ os_required_packages }}"
+    state: present
+
+- name: Install Redis block
+  block:
+    - name: Install the specified version of Redis from {{ redis_install_repo }} repo
+      yum:
+        name: "redis-{{ redis_version }}"
+        enablerepo: "{{ redis_install_repo }}"
+        state: present
+      when: redis_version != "latest"
+
+    - name: Install the latest version of Redis from {{ redis_install_repo }} repo
+      yum:
+        name: redis
+        enablerepo: "{{ redis_install_repo }}"
+        state: present
+      when: redis_version == "latest"

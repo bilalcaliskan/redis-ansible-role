@@ -8,26 +8,28 @@
     redis_installed: true
   when: ansible_facts.services["redis.service"] is defined
 
+- name: Check if sentinel is installed
+  set_fact:
+    sentinel_installed: true
+  when: ansible_facts.services["redis.service"] is defined
+
 - name: Remove Redis
   block:
-    - name: Include version specific variables for CentOS/RHEL
-      include_vars: "redhat_{{ ansible_distribution_major_version }}.yml"
-
     - name: Ensure redis service is stopped and disabled
       service:
         name: redis
         state: stopped
         enabled: false
-      loop:
-        - redis
-        - redis-sentinel
-
+    
     - name: Ensure redis-sentinel service is stopped and disabled
       service:
         name: redis-sentinel
         state: stopped
         enabled: false
       when: sentinel_enabled | bool
+
+    - name: Include version specific variables for CentOS/RHEL
+      include_vars: "redhat_{{ ansible_distribution_major_version }}.yml"
 
     - name: Revoke firewalld permissions if firewalld is running
       firewalld:
@@ -72,8 +74,8 @@
         path: "{{ item }}"
         state: absent
       loop:
-        - /etc/redis.conf
-        - /etc/redis-sentinel.conf
+        - "{{ redis_dest_file }}"
+        - "{{ sentinel_dest_file }}"
         - "{{ redis_log_file }}"
         - "{{ sentinel_log_file }}"
         - /etc/tuned/redis-server
