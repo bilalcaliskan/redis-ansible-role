@@ -10,7 +10,7 @@
         name: redis-server
         state: stopped
         enabled: false
-    
+
     - name: Ensure redis-sentinel service is stopped and disabled
       service:
         name: redis-sentinel

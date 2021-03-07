@@ -31,7 +31,7 @@
         name: redis-server
         state: present
       when: redis_version == "latest"
-    
+
     - name: Install the latest version of Redis sentinel
       apt:
         name: redis-sentinel
