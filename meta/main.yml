@@ -4,7 +4,7 @@ galaxy_info:
   author: bilalcaliskan
   role_name: redis
   description: Redis setup role with Sentinel on CentOS/RHEL 7/8 hosts
-  min_ansible_version: 2.6
+  min_ansible_version: 2.4
   galaxy_tags:
     - configuration
     - redis
