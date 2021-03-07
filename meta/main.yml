@@ -15,6 +15,11 @@ galaxy_info:
       versions:
         - 7
         - 8
+    - name: Ubuntu
+      versions:
+        - xenial
+        - bionic
+        - focal
 
 dependencies:
   - role: bilalcaliskan.remi
@@ -22,5 +27,5 @@ dependencies:
       repo_url: "{{ remi_repo_url }}"
       public_key_url: "{{ remi_public_key_url }}"
     when:
-      - (redis_install | bool)
+      - (install_redis | bool)
       - ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"

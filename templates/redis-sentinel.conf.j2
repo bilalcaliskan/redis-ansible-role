@@ -1,8 +1,14 @@
 bind 0.0.0.0
 port {{ sentinel_port }}
 
+daemonize {{ sentinel_daemonize }}
 dir {{ sentinel_data_dir }}
 logfile {{ sentinel_log_file }}
+{% if  (ansible_os_family | lower) == "debian" and (ansible_distribution_release | lower) == "xenial" %}
+pidfile /var/run/redis/redis-sentinel.pid
+{% else %}
+pidfile {{ sentinel_pid_file }}
+{% endif %}
 
 sentinel monitor {{ sentinel_cluster_name }} {{ groups[hostvars[inventory_hostname].group_names[0]][0] }} {{ redis_port }} {{ sentinel_quorum }}
 sentinel down-after-milliseconds {{ sentinel_cluster_name }} {{ sentinel_down_after_milliseconds }}

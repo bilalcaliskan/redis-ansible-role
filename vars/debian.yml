@@ -9,7 +9,10 @@ os_required_packages:
   - telnet
   - firewalld
   - vim
-  - tuned
 systemd_conf_path: /lib/systemd/system/redis-server.service
 sentinel_dest_file: /etc/redis/sentinel.conf
 redis_dest_file: /etc/redis/redis.conf
+sentinel_log_file: /var/log/redis/redis-sentinel.log
+sentinel_data_dir: /var/lib/redis
+redis_pid_file: /var/run/redis/redis-server.pid
+sentinel_pid_file: /var/run/sentinel/redis-sentinel.pid

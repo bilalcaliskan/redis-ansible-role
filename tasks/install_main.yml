@@ -11,16 +11,6 @@
 - name: Include distribution specific tasks
   include_tasks: "install_{{ ansible_os_family | lower }}.yml"
 
-- name: Transfer redis.conf template file to the remote location
-  template:
-    src: redis.conf.j2
-    dest: /etc/redis.conf
-    owner: redis
-    group: redis
-    mode: 0644
-    setype: redis_conf_t
-  changed_when: false
-
 - name: Ensure redis port is allowed for SELinux
   seport:
     ports: "{{ redis_port }}"
@@ -58,8 +48,9 @@
 - name: Ensure limits are passed to systemd unit file
   lineinfile:
     path: "{{ systemd_conf_path }}"
+    state: present
     regexp: "^{{ item.key }}"
-    insertafter: '^[Service]'
+    insertbefore: '^Type'
     line: "{{ item.key }}={{ item.value }}"
   when:
     - os_required_limits is defined
@@ -80,6 +71,11 @@
 
 - name: Include tasks from tuned.yml
   include_tasks: tuned.yml
+  when: (ansible_os_family | lower) == "redhat"
+
+- name: Include tasks from sysctl.yml
+  include_tasks: sysctl.yml
+  when: (ansible_os_family | lower) == "debian"
 
 - name: Include tasks from swap.yml
   include_tasks: swap.yml
@@ -88,13 +84,30 @@
   systemd:
     daemon_reload: true
 
+- name: Transfer redis.conf template file to the remote location
+  template:
+    src: redis.conf.j2
+    dest: "{{ redis_dest_file }}"
+    owner: redis
+    group: redis
+    mode: 0644
+    setype: redis_conf_t
+  changed_when: false
+
 - name: Start and enable redis on Redhat block
   block:
     - name: Start and enable redis service on RedHat
       service:
         name: redis
-        state: started
+        state: restarted
         enabled: true
+
+    - name: Start and enable redis-sentinel service on RedHat
+      service:
+        name: redis-sentinel
+        state: restarted
+        enabled: true
+      when: sentinel_enabled | bool
 
     - name: Set fact after installation
       set_fact:
@@ -107,8 +120,15 @@
     - name: Start and enable redis-server service on Debian
       service:
         name: redis-server
-        state: started
+        state: restarted
         enabled: true
+
+    - name: Start and enable redis-sentinel service on Debian
+      service:
+        name: redis-sentinel
+        state: restarted
+        enabled: true
+      when: sentinel_enabled | bool
 
     - name: Set fact after installation
       set_fact:

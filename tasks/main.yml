@@ -11,8 +11,8 @@
 
 - name: Include install_main.yml file conditionally
   include_tasks: install_main.yml
-  when: (redis_install | bool)
+  when: (install_redis | bool)
 
 - name: Include uninstall_main.yml file conditionally
   include_tasks: uninstall_main.yml
-  when: not (redis_install | bool)
+  when: not (install_redis | bool)

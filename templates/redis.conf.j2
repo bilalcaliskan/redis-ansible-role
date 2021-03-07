@@ -55,5 +55,5 @@ slowlog-log-slower-than {{ redis_slowlog_log_slower_than }}
 slowlog-max-len {{ redis_slowlog_max_len }}
 
 daemonize {{ redis_daemonize }}
-pidfile /var/run/redis.pid
+pidfile {{ redis_pid_file }}
 dir {{ redis_data_dir }}

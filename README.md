@@ -52,7 +52,7 @@ node03.example.com
   roles:
     - role: bilalcaliskan.redis
       vars:
-        redis_install: true
+        install_redis: true
         sentinel_enabled: false
         cluster_enabled: false
 ```
@@ -64,7 +64,7 @@ node03.example.com
   roles:
     - role: bilalcaliskan.redis
       vars:
-        redis_install: true
+        install_redis: true
         sentinel_enabled: true
         cluster_enabled: false
 ```
@@ -76,7 +76,7 @@ node03.example.com
   roles:
     - role: bilalcaliskan.redis
       vars:
-        redis_install: true
+        install_redis: true
         sentinel_enabled: false
         cluster_enabled: true
 ```
@@ -89,7 +89,7 @@ node03.example.com
   roles:
     - role: bilalcaliskan.redis
       vars:
-        redis_install: false
+        install_redis: false
 ```
 
 ### License

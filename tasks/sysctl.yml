@@ -1,0 +1,10 @@
+---
+
+- name: Set required kernel parameters
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+    reload: true
+  loop: "{{ os_required_parameters }}"
+  

@@ -1,7 +1,7 @@
 ---
 
 ############# Behavioral Parameters #############
-redis_install: true
+install_redis: true
 firewalld_enabled: true
 
 
@@ -50,17 +50,20 @@ redis_tcp_backlog: 10240
 # that once the limit is reached, Redis will close all the new connections.
 redis_maxclients: 10000
 redis_tcp_keepalive: 300
-
+systemd_conf_path: /etc/systemd/system/redis.service.d/limit.conf
+redis_pid_file: /var/run/redis.pid
 
 ############# Sentinel Specific Parameters #############
 sentinel_enabled: true
 sentinel_port: 16379
 sentinel_cluster_name: sample-cluster
-sentinel_log_file: /var/log/redis/sentinel.log
-sentinel_data_dir: /var/lib/sentinel
 sentinel_down_after_milliseconds: 10000
 sentinel_quorum: 1
-
+sentinel_daemonize: "yes"
+sentinel_dest_file: /etc/redis-sentinel.conf
+sentinel_log_file: /var/log/redis/sentinel.log
+sentinel_data_dir: /var/lib/sentinel
+sentinel_pid_file: /var/run/sentinel.pid
 
 ############# Cluster Specific Parameters #############
 cluster_enabled: false
@@ -87,6 +90,15 @@ os_required_parameters:
     value: 10240
   - key: net.core.netdev_max_backlog
     value: 10240
+os_required_packages:
+  - wget
+  - net-tools
+  - telnet
+  - firewalld
+  - vim
+  - setroubleshoot-server
+  - selinux-policy-devel
+  - tuned
 # Below parameter is required when uninstalling redis to revert everything
 os_tuned_default_profile: virtual-guest
 # if you only want default limits of redis package, leave it like below commented line

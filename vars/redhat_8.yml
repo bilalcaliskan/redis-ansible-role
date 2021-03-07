@@ -3,15 +3,5 @@
 # Currently latest Redis version for Centos8 on Remi repository is 6
 redis_version: latest
 redis_install_repo: AppStream
-os_required_packages:
-  - wget
-  - net-tools
-  - telnet
-  - firewalld
-  - vim
-  - setroubleshoot-server
-  - selinux-policy-devel
-  - tuned
-systemd_conf_path: /etc/systemd/system/redis.service.d/limit.conf
-sentinel_dest_file: /etc/redis-sentinel.conf
 redis_dest_file: /etc/redis.conf
+sentinel_dest_file: /etc/redis-sentinel.conf

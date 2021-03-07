@@ -15,7 +15,7 @@
     dest: "{{ sentinel_dest_file }}"
     owner: redis
     group: redis
-    mode: 0644
+    mode: '644'
     setype: redis_conf_t
   changed_when: false
 
@@ -36,9 +36,3 @@
     immediate: true
     state: enabled
   when: (firewalld_enabled | bool)
-
-- name: start and enable redis-sentinel service
-  service:
-    name: redis-sentinel
-    state: started
-    enabled: true
