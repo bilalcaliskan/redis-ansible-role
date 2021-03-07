@@ -12,3 +12,4 @@ pidfile {{ sentinel_pid_file }}
 
 sentinel monitor {{ sentinel_cluster_name }} {{ groups[hostvars[inventory_hostname].group_names[0]][0] }} {{ redis_port }} {{ sentinel_quorum }}
 sentinel down-after-milliseconds {{ sentinel_cluster_name }} {{ sentinel_down_after_milliseconds }}
+sentinel resolve-hostnames yes
