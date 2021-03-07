@@ -92,7 +92,6 @@
     group: redis
     mode: 0644
     setype: redis_conf_t
-  changed_when: false
 
 - name: Start and enable redis on Redhat block
   block:
@@ -101,6 +100,7 @@
         name: redis
         state: restarted
         enabled: true
+      changed_when: false
 
     - name: Start and enable redis-sentinel service on RedHat
       service:
@@ -108,6 +108,7 @@
         state: restarted
         enabled: true
       when: sentinel_enabled | bool
+      changed_when: false
 
     - name: Set fact after installation
       set_fact:
@@ -122,6 +123,7 @@
         name: redis-server
         state: restarted
         enabled: true
+      changed_when: false
 
     - name: Start and enable redis-sentinel service on Debian
       service:
@@ -129,6 +131,7 @@
         state: restarted
         enabled: true
       when: sentinel_enabled | bool
+      changed_when: false
 
     - name: Set fact after installation
       set_fact:
