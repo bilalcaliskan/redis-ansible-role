@@ -11,7 +11,6 @@ remi_public_key_url: https://rpms.remirepo.net/RPM-GPG-KEY-remi
 
 ############# Redis Specific Parameters #############
 redis_port: 6379
-redis_install_repo: remi
 redis_replica_read_only: "yes"
 redis_log_level: notice
 redis_data_dir: /var/lib/redis
