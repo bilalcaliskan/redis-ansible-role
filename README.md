@@ -1,43 +1,32 @@
-## Redis Ansible Role
-
+# Redis Ansible Role
 [![CI](https://github.com/bilalcaliskan/redis-ansible-role/workflows/CI/badge.svg?event=push)](https://github.com/bilalcaliskan/redis-ansible-role/actions?query=workflow%3ACI)
 
-Installs and configures Redis with Sentinel to provide high availability on RHEL/CentOS servers.
+Installs and configures Redis servers as cluster or sentinel on Redhat/Debian based hosts.
 
-### Requirements
-
+## Requirements
 This role requires minimum Ansible version 2.4 and maximum Ansible version 2.9. You can install suggested version with pip:
 ```
 $ pip install "ansible==2.9.16"
 ```
 
 No special requirements; note that this role requires root access, so either run it in a
-playbook with a global `become: true`, or invoke the role in your playbook like:
+playbook with a global `become: true`, or invoke the role in your playbook.
 
-```yaml
-- hosts: all
-  become: true
-  roles:
-    - role: bilalcaliskan.redis
-      vars:
-        simple_role_var: foo
-```
-
-### Role Variables
-
+## Role Variables
 See the default values in [defaults/main.yml](defaults/main.yml). You can overwrite them in [vars/main.yml](vars/main.yml) if neccessary or you can set them while running playbook.
 
-> Please note that this role will ensure that `firewalld` systemd service on your servers are started and enabled by default. If you want to stop and disable `firewalld` service, please modify below variable as false when running playbook:  
-> ```yaml  
+> Please note that this role will ensure that `firewalld` systemd service on your servers are started and enabled by default. If you want to stop and disable `firewalld` service, please modify below variable as false when running playbook:
+> ```yaml
 > firewalld_enabled: false
 
 
 ## Dependencies
 
-This role depends on [bilalcaliskan.remi](https://galaxy.ansible.com/bilalcaliskan/remi) role, so it contains that dependency on meta/main.yml.
+This role depends on [bilalcaliskan.remi](https://galaxy.ansible.com/bilalcaliskan/remi) role on Redhat based hosts, so it contains that dependency on meta/main.yml.
 
-### Example Inventory File
+## Examples
 
+### Inventory
 ```
 [redis]
 node01.example.com
@@ -45,7 +34,8 @@ node02.example.com
 node03.example.com
 ```
 
-### Example Playbook File For Installation With `Standalone Mode`
+### Installation
+**Standalone mode**
 ```yaml
 - hosts: redis
   become: true
@@ -57,7 +47,7 @@ node03.example.com
         cluster_enabled: false
 ```
 
-### Example Playbook File For Installation With `Sentinel Mode`
+**Sentinel mode**
 ```yaml
 - hosts: redis
   become: true
@@ -69,7 +59,7 @@ node03.example.com
         cluster_enabled: false
 ```
 
-### Example Playbook File For Installation With `Cluster Mode`
+**Cluster mode**
 ```yaml
 - hosts: redis
   become: true
@@ -81,8 +71,7 @@ node03.example.com
         cluster_enabled: true
 ```
 
-### Example Playbook File For `Uninstallation`
-
+### Uninstallation
 ```yaml
 - hosts: redis
   become: true
@@ -92,6 +81,12 @@ node03.example.com
         install_redis: false
 ```
 
-### License
+## Development
+This project requires below tools while developing:
+- [Ansible 2.4 or higher](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
+- [pre-commit](https://pre-commit.com/)
+- [ansible-lint](https://ansible-lint.readthedocs.io/en/latest/installing.html#using-pip-or-pipx) - required by [pre-commit](https://pre-commit.com/)
+- [Bash shell](https://www.gnu.org/software/bash/) - required by [pre-commit](https://pre-commit.com/)
 
-MIT / BSD
+## License
+Apache License 2.0
