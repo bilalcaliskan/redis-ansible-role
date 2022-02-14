@@ -21,13 +21,6 @@
     - ansible_selinux is defined
     - ansible_selinux | bool
 
-- name: Stop firewalld if desired by user
-  service:
-    name: firewalld
-    state: stopped
-    enabled: false
-  when: not (firewalld_enabled | bool)
-
 - name: Firewalld related block
   block:
     - name: Ensure firewalld is started and enabled
@@ -71,7 +64,9 @@
 
 - name: Include tasks from tuned.yml
   include_tasks: tuned.yml
-  when: (ansible_os_family | lower) == "redhat"
+  when:
+    - (ansible_os_family | lower) == "redhat"
+    - os_enable_tuned | bool
 
 - name: Include tasks from sysctl.yml
   include_tasks: sysctl.yml

@@ -109,6 +109,7 @@ os_required_limits:
 # https://redis.io/topics/admin
 os_disable_thp: true
 os_disable_swap: true
+os_enable_tuned: true
 # New swap file on the below location will be created only if os_disable_swap is false
 # and current swap space on the system(ansible_swaptotal_mb) is 0 MB.
 os_swap_file_path: /swapfile
