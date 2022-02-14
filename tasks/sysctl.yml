@@ -6,4 +6,5 @@
     value: "{{ item.value }}"
     state: present
     reload: true
+  ignore_errors: true
   loop: "{{ os_required_parameters }}"
