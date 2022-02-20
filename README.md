@@ -1,5 +1,6 @@
 # Redis Ansible Role
 [![CI](https://github.com/bilalcaliskan/redis-ansible-role/workflows/CI/badge.svg?event=push)](https://github.com/bilalcaliskan/redis-ansible-role/actions?query=workflow%3ACI)
+[![GitHub tag](https://img.shields.io/github/tag/bilalcaliskan/redis-ansible-role.svg)](https://GitHub.com/bilalcaliskan/redis-ansible-role/tags/)
 
 Installs and configures Redis servers as cluster or sentinel on Redhat/Debian based hosts.
 
