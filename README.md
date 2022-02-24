@@ -16,9 +16,10 @@ playbook with a global `become: true`, or invoke the role in your playbook.
 ## Role Variables
 See the default values in [defaults/main.yml](defaults/main.yml). You can overwrite them in [vars/main.yml](vars/main.yml) if neccessary or you can set them while running playbook.
 
-> Please note that this role will ensure that `firewalld` systemd service on your servers are started and enabled by default. If you want to stop and disable `firewalld` service, please modify below variable as false when running playbook:
+> Please note that this role can ensure that `firewalld` systemd service on your servers are started and enabled by default. If you want to start and enable `firewalld` service, please modify below variable as true while running playbook:
 > ```yaml
-> firewalld_enabled: false
+> firewalld_enabled: true
+> ```
 
 
 ## Dependencies

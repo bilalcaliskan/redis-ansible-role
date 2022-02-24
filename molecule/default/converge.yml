@@ -7,5 +7,4 @@
     - role: bilalcaliskan.redis
       vars:
         os_enable_tuned: false
-        firewalld_enabled: false
         os_disable_swap: false
