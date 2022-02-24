@@ -3,6 +3,10 @@
 - name: Converge
   hosts: all
   become: true
+  pre_tasks:
+    - name: Install package
+      pip:
+        name: python3-apt
   roles:
     - role: bilalcaliskan.redis
       vars:
