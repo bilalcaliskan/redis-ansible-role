@@ -14,7 +14,7 @@ You can install suggested version with pip3:
 $ pip3 install "ansible==2.9.16"
 ```
 
-> Note that this role requires root access, so either run it in a playbook with a global `become: true`, or invoke the role in your playbook.
+Note that this role requires root access, so either run it in a playbook with a global `become: true`, or invoke the role in your playbook.
 
 ## Role Variables
 See the default values in [defaults/main.yml](defaults/main.yml). You can overwrite them in [vars/main.yml](vars/main.yml) if neccessary or you can set them while running playbook.
@@ -86,8 +86,9 @@ node03.example.com
 ```
 
 ## Development
-This project requires below tools while developing:
-- [Ansible 2.4 or higher](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
+This project requires below tools for development:
+- [Python 3.x](https://www.python.org/downloads/)
+- [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) - (min 2.4, suggested 2.9.16)
 - [pre-commit](https://pre-commit.com/)
 - [ansible-lint](https://ansible-lint.readthedocs.io/en/latest/installing.html#using-pip-or-pipx) - required by [pre-commit](https://pre-commit.com/)
 - [Bash shell](https://www.gnu.org/software/bash/) - required by [pre-commit](https://pre-commit.com/)
