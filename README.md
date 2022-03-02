@@ -5,13 +5,16 @@
 Installs and configures Redis servers as cluster or sentinel on Redhat/Debian based hosts.
 
 ## Requirements
-This role requires minimum Ansible version 2.4 and maximum Ansible version 2.9. You can install suggested version with pip:
+This role has below requirements:
+- [Python 3.x](https://www.python.org/downloads/)
+- [Ansible](https://docs.ansible.com/) (min 2.4, suggested 2.9.16)
+
+You can install suggested version with pip3:
 ```
-$ pip install "ansible==2.9.16"
+$ pip3 install "ansible==2.9.16"
 ```
 
-No special requirements; note that this role requires root access, so either run it in a
-playbook with a global `become: true`, or invoke the role in your playbook.
+> Note that this role requires root access, so either run it in a playbook with a global `become: true`, or invoke the role in your playbook.
 
 ## Role Variables
 See the default values in [defaults/main.yml](defaults/main.yml). You can overwrite them in [vars/main.yml](vars/main.yml) if neccessary or you can set them while running playbook.
@@ -23,8 +26,7 @@ See the default values in [defaults/main.yml](defaults/main.yml). You can overwr
 
 
 ## Dependencies
-
-This role depends on [bilalcaliskan.remi](https://galaxy.ansible.com/bilalcaliskan/remi) role on Redhat based hosts, so it contains that dependency on meta/main.yml.
+This role depends on [bilalcaliskan.remi](https://galaxy.ansible.com/bilalcaliskan/remi) role on Redhat based hosts.
 
 ## Examples
 
@@ -90,5 +92,9 @@ This project requires below tools while developing:
 - [ansible-lint](https://ansible-lint.readthedocs.io/en/latest/installing.html#using-pip-or-pipx) - required by [pre-commit](https://pre-commit.com/)
 - [Bash shell](https://www.gnu.org/software/bash/) - required by [pre-commit](https://pre-commit.com/)
 
+After you install all the tools above, you can simply configure [pre-commit](https://pre-commit.com/) by typing:
+```shell
+$ pre-commit install
+```
 ## License
 Apache License 2.0
