@@ -16,4 +16,3 @@ rules:
 
 ignore: |
   .github/stale.yml
-  .travis.yml
